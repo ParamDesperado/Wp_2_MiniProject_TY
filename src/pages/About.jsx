@@ -1,5 +1,6 @@
 import React from 'react';
 import { Code, Server, Cpu, Database, ArrowRight } from 'lucide-react';
+import { DEMO_MODE } from '../services/api';
 
 const About = () => (
   <div>
@@ -40,18 +41,24 @@ const About = () => (
 
     <h3 className="section-title anim-fade-up anim-delay-3">How it works</h3>
     <div className="card arch-card anim-fade-up anim-delay-3">
-      {[
+      {(DEMO_MODE ? [
+        { title: 'React', sub: 'Pages', file: 'src/pages/' },
+        { title: 'API layer', sub: 'Same endpoints + logic, run in the browser', file: 'src/services/browserDb.js' },
+        { title: 'localStorage', sub: 'Browser database (online version)', file: 'agrisense_db' },
+      ] : [
         { title: 'React', sub: 'Browser · localhost:5173', file: 'src/pages/' },
         { title: 'Express API', sub: 'Node.js · localhost:5001', file: 'server/routes/' },
         { title: 'MongoDB', sub: 'localhost:27017 · db "agrisense"', file: 'server/models/' },
-      ].map((b, i) => (
+      ]).map((b, i) => (
         <React.Fragment key={b.title}>
           {i > 0 && <ArrowRight className="arch-arrow" size={22} />}
           <div className="arch-box"><b>{b.title}</b><span>{b.sub}</span><code>{b.file}</code></div>
         </React.Fragment>
       ))}
     </div>
-    <p className="arch-note">The page calls the API with <code>fetch</code> (<code>src/services/api.js</code>), the API runs the rules in <code>server/logic.js</code> and saves to MongoDB. See it live on the <b>Database</b> page or in MongoDB Compass.</p>
+    {DEMO_MODE
+      ? <p className="arch-note">Online version: every page talks to one API layer (<code>src/services/api.js</code>). On Vercel it runs the endpoints in the browser and saves to localStorage. The full Express + MongoDB server is in <code>server/</code> and starts with <code>npm run dev</code>. Both use the same rules from <code>server/logic.js</code>.</p>
+      : <p className="arch-note">The page calls the API with <code>fetch</code> (<code>src/services/api.js</code>), the API runs the rules in <code>server/logic.js</code> and saves to MongoDB. See it live on the <b>Database</b> page or in MongoDB Compass.</p>}
 
     <h3 className="section-title anim-fade-up anim-delay-3">Team Members</h3>
     <div className="team-grid">

@@ -75,7 +75,7 @@ const Database = () => {
       <header className="page-header anim-fade-up">
         <h1>Database Viewer</h1>
         {data.db.mode === 'browser'
-          ? <p>Online demo mode: data is saved in this browser (localStorage). Run the project locally to use the real MongoDB.</p>
+          ? <p>Online version: data is stored in this browser's <strong>localStorage</strong> (key <code>agrisense_db</code>), in the same collections the MongoDB server uses. Press F12 → Application → Local Storage to see the raw data.</p>
           : <p>Live contents of MongoDB database <strong>{data.db.name}</strong> running at <code>mongodb://{data.db.host}:{data.db.port}</code> – the same data you see in MongoDB Compass</p>}
       </header>
 
