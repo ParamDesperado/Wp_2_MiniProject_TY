@@ -18,7 +18,7 @@ src/pages/            React pages
 src/services/api.js   every call from React to the backend
 server/app.js         Express app (middleware + routes)
 server/index.js       local start: connect MongoDB + listen
-api/index.js          Vercel start (same app)
+src/services/browserDb.js  online demo mode (used on Vercel)
 server/routes/        API URLs
 server/logic.js       all calculations (advice, simulator, alerts, irrigation)
 server/models/        MongoDB collections
@@ -40,12 +40,17 @@ server/middleware/    login check (JWT) and activity log
 | POST | /api/admin/sample-data | reload random sample data |
 | DELETE | /api/admin/everything | erase the whole database |
 
-## Deploying on Vercel
-Frontend and backend deploy together: `api/index.js` runs the Express app as a Vercel function, and `vercel.json` sends every `/api/*` request to it. Vercel can't reach the MongoDB on your laptop, so it needs a free cloud database:
-1. **MongoDB Atlas** (free M0 cluster) → *Database Access*: create a user → *Network Access*: allow `0.0.0.0/0` → *Connect → Drivers*: copy the connection string, and put `/agrisense` before the `?`.
-2. **Vercel** → import the GitHub repo (framework: Vite) → *Environment Variables*: `MONGO_URI` = the Atlas string, `JWT_SECRET` = any secret word → **Deploy**.
-3. Open the site → **Use demo account**. Sample data is created automatically.
+## Two modes
+| Where | Backend | Database |
+|---|---|---|
+| **Your laptop** (`npm run dev`) | Express API (`server/`) | MongoDB |
+| **Vercel** (online) | Same endpoints, run in the browser (`src/services/browserDb.js`) | The browser's localStorage |
 
-Without `MONGO_URI`, the site still loads but login shows "Database not connected".
+The switch is automatic: Vercel sets `VERCEL=1` while building (see `vite.config.js`). Both modes use the same calculations from `server/logic.js`. No database setup is needed online.
+
+## Hosting on Vercel
+1. vercel.com → **Add New → Project** → import `Wp_2_MiniProject_TY` from GitHub.
+2. Leave every setting as it is (Vercel detects Vite) → **Deploy**.
+3. Open the link → **Use demo account**.
 
 See **DEMO_GUIDE.md** for the presentation script.

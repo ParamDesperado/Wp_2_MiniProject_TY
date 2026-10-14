@@ -1,22 +1,38 @@
 // API service layer: every call to the Express backend lives here.
 // The login token (JWT) is kept in localStorage and sent with each request.
+import { browserRequest } from './browserDb';
 
 const BASE = '/api';
 
+// On Vercel there is no MongoDB server, so the app switches to "demo mode":
+// the same endpoints run inside the browser (see browserDb.js). Locally = real Express + MongoDB.
+export const DEMO_MODE = import.meta.env.VITE_BROWSER_DB === 'true';
+
+export const logoutLocally = () => {
+  localStorage.removeItem('auth_token');
+  localStorage.removeItem('user_name');
+};
+
 const request = async (path, options = {}) => {
   const token = localStorage.getItem('auth_token');
-  const res = await fetch(BASE + path, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
+  let status, data;
+  if (DEMO_MODE) {
+    ({ status, data } = await browserRequest(options.method || 'GET', path, options.body ? JSON.parse(options.body) : {}, token));
+  } else {
+    const res = await fetch(BASE + path, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    });
+    status = res.status;
+    data = await res.json().catch(() => ({}));
+  }
+  if (status >= 400) {
     // Token expired / invalid -> force a fresh login
-    if (res.status === 401 && token) {
-      localStorage.clear();
+    if (status === 401 && token) {
+      logoutLocally();
       window.location.href = '/login';
     }
     throw new Error(data.message || 'Something went wrong');

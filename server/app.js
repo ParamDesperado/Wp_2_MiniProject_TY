@@ -1,4 +1,4 @@
-// The Express app: middleware + all API routes. (Started by server/index.js locally, or api/index.js on Vercel.)
+// The Express app: middleware + all API routes. Started by server/index.js.
 import express from 'express';
 import cors from 'cors';
 import auth from './middleware/auth.js';

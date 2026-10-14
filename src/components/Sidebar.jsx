@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { logoutLocally } from '../services/api';
 import { LayoutDashboard, Droplets, Activity, Leaf, Bell, Info, X, LogOut, Home, Database } from 'lucide-react';
 
 const navItems = [
@@ -16,8 +17,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen, setAuth }) => {
   const userName = localStorage.getItem('user_name') || 'Farmer';
 
   const handleLogout = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_name');
+    logoutLocally();
     if (setAuth) setAuth(false);
     navigate('/login');
   };

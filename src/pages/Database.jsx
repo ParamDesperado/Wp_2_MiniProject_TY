@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { RefreshCw, RotateCcw, Trash2, UserPlus, Users, Activity, Bell, Droplets, ListChecks } from 'lucide-react';
-import { fetchOverview, addUser, deleteUser, loadSampleData, eraseEverything } from '../services/api';
+import { fetchOverview, logoutLocally, addUser, deleteUser, loadSampleData, eraseEverything } from '../services/api';
 import LogicBox from '../components/LogicBox';
 
 const fmt = (d) => new Date(d).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -58,7 +58,7 @@ const Database = () => {
   const onErase = async () => {
     if (!window.confirm('ERASE THE ENTIRE DATABASE? All users, readings, alerts and logs will be deleted.')) return;
     await eraseEverything();
-    localStorage.clear();
+    logoutLocally();
     alert('Database erased. Register a new account or use the demo login.');
     window.location.href = '/login'; // full reload so the app forgets the old login
   };
@@ -74,7 +74,9 @@ const Database = () => {
     <div>
       <header className="page-header anim-fade-up">
         <h1>Database Viewer</h1>
-        <p>Live contents of MongoDB database <strong>{data.db.name}</strong> running at <code>mongodb://{data.db.host}:{data.db.port}</code> – the same data you see in MongoDB Compass</p>
+        {data.db.mode === 'browser'
+          ? <p>Online demo mode: data is saved in this browser (localStorage). Run the project locally to use the real MongoDB.</p>
+          : <p>Live contents of MongoDB database <strong>{data.db.name}</strong> running at <code>mongodb://{data.db.host}:{data.db.port}</code> – the same data you see in MongoDB Compass</p>}
       </header>
 
       <div className="stats-grid" style={{ marginBottom: '1.25rem' }}>
