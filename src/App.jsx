@@ -6,15 +6,15 @@ import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import IrrigationAdvisory from './pages/IrrigationAdvisory';
-import Sensors from './pages/Sensors';
+import History from './pages/History';
 import CropInfo from './pages/CropInfo';
 import Alerts from './pages/Alerts';
 import About from './pages/About';
+import Database from './pages/Database';
 
 function App() {
   const [isAuth, setIsAuth] = React.useState(
-    localStorage.getItem('auth_token') === 'true'
+    !!localStorage.getItem('auth_token')
   );
 
   return (
@@ -27,10 +27,13 @@ function App() {
         <Route path="/app" element={isAuth ? <Layout setAuth={setIsAuth} /> : <Navigate to="/login" replace />}>
           <Route index element={<Navigate to="/app/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="advisory" element={<IrrigationAdvisory />} />
-          <Route path="sensors" element={<Sensors />} />
+          <Route path="history" element={<History />} />
+          {/* old pages are now part of the dashboard */}
+          <Route path="advisory" element={<Navigate to="/app/dashboard" replace />} />
+          <Route path="sensors" element={<Navigate to="/app/dashboard" replace />} />
           <Route path="crop" element={<CropInfo />} />
           <Route path="alerts" element={<Alerts />} />
+          <Route path="database" element={<Database />} />
           <Route path="about" element={<About />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -167,7 +167,7 @@ const Landing = () => {
 
         <div className="hero-grid">
           <div>
-            <div className="eyebrow-badge"><Radio size={13} /> AI + Sensor-Driven Irrigation</div>
+            <div className="eyebrow-badge"><Radio size={13} /> Smart Sensor-Driven Irrigation</div>
 
             <h1 className="hero-title" ref={titleRef}>
               <span className="title-line">{splitLine('Irrigate on the ')}</span>
@@ -252,7 +252,7 @@ const Landing = () => {
             />
             <FeatureCard
               icon={<Droplets size={22} />}
-              title="AI Irrigation Advisory"
+              title="Smart Irrigation Advisory"
               desc="A clear today-or-skip recommendation with the reasoning behind it — no more guesswork on the valves."
               to="/app/advisory"
               delay={80}
@@ -288,7 +288,7 @@ const Landing = () => {
           <div className="steps-row">
             {[
               { icon: <Radio size={18} />, title: 'Sense', desc: "In-field sensors capture soil moisture, temperature, humidity and rainfall." },
-              { icon: <BrainCircuit size={18} />, title: 'Analyze', desc: "The AI model compares live readings against the crop's growth stage and local weather." },
+              { icon: <BrainCircuit size={18} />, title: 'Analyze', desc: "The rule engine compares live readings with the ideal moisture, temperature and rainfall for sugarcane." },
               { icon: <Bolt size={18} />, title: 'Advise', desc: 'AgriSense turns that into one clear call: irrigate now, or hold off.' },
               { icon: <CheckCircle2 size={18} />, title: 'Act & Track', desc: 'Log the irrigation, then watch soil moisture and yield respond over time.' },
             ].map((s, i) => (

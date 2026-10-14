@@ -1,5 +1,5 @@
 import React from 'react';
-import { Code, Server, Cpu, Database } from 'lucide-react';
+import { Code, Server, Cpu, Database, ArrowRight } from 'lucide-react';
 
 const About = () => (
   <div>
@@ -18,17 +18,17 @@ const About = () => (
       </div>
       <div className="about-section">
         <h3>Our Solution</h3>
-        <p>A smart irrigation system using real-time sensor data combined with AI-based recommendations to suggest exactly when and how much to irrigate.</p>
+        <p>A smart irrigation system that reads field sensor data and uses a transparent rule engine to suggest exactly when and how much to irrigate – and explains every calculation step by step.</p>
       </div>
     </div>
 
     <h3 className="section-title anim-fade-up anim-delay-2">Technologies</h3>
     <div className="tech-grid">
       {[
-        { icon:<Code size={28} color="#61dafb"/>, title:'Frontend', desc:'React, HTML, CSS, JS' },
-        { icon:<Server size={28} color="#3776ab"/>, title:'Backend', desc:'Python (Flask/Django)' },
-        { icon:<Cpu size={28} color="var(--warning)"/>, title:'AI / ML', desc:'Prediction Models' },
-        { icon:<Database size={28} color="var(--primary)"/>, title:'IoT Sensors', desc:'Moisture, Temp, Humidity' },
+        { icon:<Code size={28} color="#61dafb"/>, title:'Frontend', desc:'React + Vite, React Router, Recharts' },
+        { icon:<Server size={28} color="#3c873a"/>, title:'Backend', desc:'Node.js + Express REST API, JWT login, bcrypt' },
+        { icon:<Database size={28} color="var(--primary)"/>, title:'Database', desc:'MongoDB + Mongoose (5 collections)' },
+        { icon:<Cpu size={28} color="var(--warning)"/>, title:'Logic', desc:'Rule engine + weather simulator (server/logic.js)' },
       ].map((t,i) => (
         <div key={i} className={`tech-card anim-fade-up anim-delay-${i+2}`}>
           {t.icon}
@@ -37,6 +37,21 @@ const About = () => (
         </div>
       ))}
     </div>
+
+    <h3 className="section-title anim-fade-up anim-delay-3">How it works</h3>
+    <div className="card arch-card anim-fade-up anim-delay-3">
+      {[
+        { title: 'React', sub: 'Browser · localhost:5173', file: 'src/pages/' },
+        { title: 'Express API', sub: 'Node.js · localhost:5001', file: 'server/routes/' },
+        { title: 'MongoDB', sub: 'localhost:27017 · db "agrisense"', file: 'server/models/' },
+      ].map((b, i) => (
+        <React.Fragment key={b.title}>
+          {i > 0 && <ArrowRight className="arch-arrow" size={22} />}
+          <div className="arch-box"><b>{b.title}</b><span>{b.sub}</span><code>{b.file}</code></div>
+        </React.Fragment>
+      ))}
+    </div>
+    <p className="arch-note">The page calls the API with <code>fetch</code> (<code>src/services/api.js</code>), the API runs the rules in <code>server/logic.js</code> and saves to MongoDB. See it live on the <b>Database</b> page or in MongoDB Compass.</p>
 
     <h3 className="section-title anim-fade-up anim-delay-3">Team Members</h3>
     <div className="team-grid">

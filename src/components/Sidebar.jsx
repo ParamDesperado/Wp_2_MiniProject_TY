@@ -1,21 +1,23 @@
 import React from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Droplets, Activity, Leaf, Bell, Info, X, LogOut, Home } from 'lucide-react';
+import { LayoutDashboard, Droplets, Activity, Leaf, Bell, Info, X, LogOut, Home, Database } from 'lucide-react';
 
 const navItems = [
   { path: '/app/dashboard', name: 'Dashboard', icon: <LayoutDashboard size={18} /> },
-  { path: '/app/advisory', name: 'Advisory', icon: <Droplets size={18} /> },
-  { path: '/app/sensors', name: 'Sensors', icon: <Activity size={18} /> },
+  { path: '/app/history', name: 'History', icon: <Activity size={18} /> },
   { path: '/app/crop', name: 'Crop Info', icon: <Leaf size={18} /> },
   { path: '/app/alerts', name: 'Alerts', icon: <Bell size={18} /> },
+  { path: '/app/database', name: 'Database', icon: <Database size={18} /> },
   { path: '/app/about', name: 'About', icon: <Info size={18} /> },
 ];
 
 const Sidebar = ({ mobileOpen, setMobileOpen, setAuth }) => {
   const navigate = useNavigate();
+  const userName = localStorage.getItem('user_name') || 'Farmer';
 
   const handleLogout = () => {
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_name');
     if (setAuth) setAuth(false);
     navigate('/login');
   };
@@ -51,9 +53,9 @@ const Sidebar = ({ mobileOpen, setMobileOpen, setAuth }) => {
 
         <div className="sidebar-footer">
           <div className="user-profile">
-            <div className="avatar">P</div>
+            <div className="avatar">{userName[0].toUpperCase()}</div>
             <div className="user-info">
-              <span className="name">Param</span>
+              <span className="name">{userName}</span>
               <span className="role">Farmer</span>
             </div>
           </div>

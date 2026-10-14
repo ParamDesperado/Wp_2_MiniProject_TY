@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Droplets, Sprout, ArrowLeft } from 'lucide-react';
+import { loginUser, demoLogin } from '../services/api';
 
 const Login = ({ setAuth }) => {
   const navigate = useNavigate();
@@ -8,14 +9,20 @@ const Login = ({ setAuth }) => {
   const [pass, setPass] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (!email || !pass) { setError('Please fill all fields'); return; }
-    if (pass.length < 4) { setError('Password too short'); return; }
-    localStorage.setItem('auth_token', 'true');
-    localStorage.setItem('user_name', email.split('@')[0]);
-    if (setAuth) setAuth(true);
-    navigate('/app/dashboard');
+  const handleLogin = async (e, demo = false) => {
+    e?.preventDefault();
+    if (!demo && (!email || !pass)) { setError('Please fill all fields'); return; }
+    try {
+      // Backend checks the password and returns a JWT token + user info.
+      // demo = "Use demo account" button (backend re-creates the demo user if it was erased).
+      const { token, user } = demo ? await demoLogin() : await loginUser(email, pass);
+      localStorage.setItem('auth_token', token);
+      localStorage.setItem('user_name', user.name);
+      if (setAuth) setAuth(true);
+      navigate('/app/dashboard');
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -40,6 +47,8 @@ const Login = ({ setAuth }) => {
             <input type="password" placeholder="••••••••" value={pass} onChange={e => setPass(e.target.value)} />
           </div>
           <button type="submit" className="btn auth-btn">Login</button>
+          <button type="button" className="btn demo-btn" onClick={() => handleLogin(null, true)}>Use demo account (one click)</button>
+          <p style={{ fontSize: '.78rem', color: 'var(--text-muted)', textAlign: 'center' }}>Demo: param@agrisense.com / 1234</p>
         </form>
 
         <div className="auth-footer">

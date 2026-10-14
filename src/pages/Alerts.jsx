@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AlertTriangle, AlertCircle, CheckCircle } from 'lucide-react';
-import { fetchAlertsData } from '../services/api';
+import { fetchAlertsData, fetchOptions } from '../services/api';
+import LogicBox from '../components/LogicBox';
 
 const icons = {
   critical: <AlertTriangle size={20} color="var(--danger)"/>,
@@ -8,19 +9,17 @@ const icons = {
   normal: <CheckCircle size={20} color="var(--success)"/>,
 };
 
-const extraAlerts = [
-  { id: 4, type: 'warning', message: 'Rainfall expected tomorrow. Hold irrigation.', time: '5 hours ago' },
-  { id: 5, type: 'critical', message: 'Soil Moisture Sensor 2 disconnected.', time: '1 day ago' },
-  { id: 6, type: 'normal', message: 'Irrigation cycle completed successfully.', time: '2 days ago' },
-];
-
 const Alerts = () => {
   const [alerts, setAlerts] = useState([]);
+  const [filter, setFilter] = useState('');  // '' = all, or 'critical' / 'warning' / 'normal'
+  const [rules, setRules] = useState(null);   // thresholds from server/logic.js
 
-  // Fetch the alert list once when the page loads.
+  useEffect(() => { fetchOptions().then(o => setRules(o.rules)); }, []);
+
+  // Re-fetch from the backend whenever the filter changes (backend filters in MongoDB).
   useEffect(() => {
-    fetchAlertsData().then((data) => setAlerts([...data, ...extraAlerts]));
-  }, []);
+    fetchAlertsData(filter).then(setAlerts);
+  }, [filter]);
 
   return (
     <div>
@@ -33,12 +32,23 @@ const Alerts = () => {
         <div className="alerts-header-row">
           <h3>All Alerts</h3>
           <div className="alert-filters">
-            <span className="filter active">All</span>
-            <span className="filter">Critical</span>
-            <span className="filter">Warnings</span>
+            <span className={`filter ${filter === '' ? 'active' : ''}`} onClick={() => setFilter('')}>All</span>
+            <span className={`filter ${filter === 'critical' ? 'active' : ''}`} onClick={() => setFilter('critical')}>Critical</span>
+            <span className={`filter ${filter === 'warning' ? 'active' : ''}`} onClick={() => setFilter('warning')}>Warnings</span>
+            <span className={`filter ${filter === 'normal' ? 'active' : ''}`} onClick={() => setFilter('normal')}>Normal</span>
           </div>
         </div>
+        {rules && <LogicBox label="Show logic: when is an alert created?" steps={[
+          'Every new sensor reading is checked against these rules (server/logic.js → checkAlerts):',
+          `Moisture below ${rules.severeDryBelow}% → CRITICAL "Severe dryness"`,
+          `Moisture below ${rules.dryBelow}% → WARNING "Low soil moisture"`,
+          `Temperature above ${rules.alertHotAbove}°C → CRITICAL "High temperature"`,
+          `Rainfall ${rules.heavyRain} mm or more → WARNING "Heavy rain – hold irrigation"`,
+          `Water tank below ${rules.lowTankBelow}% → WARNING "Water tank low"`,
+          'Pressing "Irrigate Now" → NORMAL "Irrigation done"',
+        ]} />}
         <div className="alerts-list-full">
+          {alerts.length === 0 && <div className="empty-state">No alerts.</div>}
           {alerts.map((a, i) => (
             <div key={a.id} className={`alert-card-full type-${a.type} anim-fade-up anim-delay-${Math.min(i+1, 5)}`}>
               <div className="alert-icon-container">{icons[a.type]}</div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Droplets, Sprout, ArrowLeft } from 'lucide-react';
+import { registerUser } from '../services/api';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -9,13 +10,18 @@ const Register = () => {
 
   const update = (key, val) => setForm(prev => ({...prev, [key]: val}));
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.password) { setError('Please fill all fields'); return; }
     if (form.password !== form.confirm) { setError('Passwords do not match'); return; }
     if (form.password.length < 4) { setError('Password must be at least 4 characters'); return; }
-    alert('Registration successful! Please login.');
-    navigate('/login');
+    try {
+      await registerUser(form); // saves the user in MongoDB
+      alert('Registration successful! Please login.');
+      navigate('/login');
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
